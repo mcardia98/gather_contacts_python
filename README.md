@@ -48,3 +48,6 @@ options:
 
 ## Limitations
 CANNOT be run as root.  Currently debugging
+
+## TODO
+Large companies may trigger a temporary IP ban and require a captcha.  Tool may fail due to timeout, looking to catch the timeout and write results gathered.
