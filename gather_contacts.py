@@ -33,7 +33,7 @@ parser.add_argument('-o', '--output-file', type=str, nargs='*', required=False,
 					company_scrape.txt
 					company_scrape.csv
 					Otherwise prints results to terminal.""")
-parser.add_argument('-n', '--num-employees', type=int, nargs=1, required=False,
+parser.add_argument('-n', '--num-employees', type=int, nargs=1, required=False, default=None,
 					help="Optional number of employees to scrape, ex 49, otherwise grabs all employees found on LinkedIn.")
 args = parser.parse_args()
 csv = False
@@ -59,7 +59,7 @@ if(len(file_name)==1):
 			txt = True
 			txt_file = open(file_name,"w")
 			txt_file.write("Name" + "\t" + "Position" + "\t" + "Email\n")
-if(len(file_name)>1):
+if(len(args.output_file)>1):
 	for x in file_name:
 		file_name = x
 		file_format = file_name.split(".")[1]
@@ -84,14 +84,17 @@ driver = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverMana
 
 # Go to company site and get employee count
 driver.get('http://google.com')
-element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, 'q')))
-driver.find_element(By.NAME,'q').send_keys("site:linkedin.com " + args.company[0] + Keys.ENTER)
-element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'linked')))
-driver.find_element(By.PARTIAL_LINK_TEXT, 'linked').click()
-element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'employee')))
-num_employees = driver.find_element(By.PARTIAL_LINK_TEXT, 'employee')
-num_employees = re.sub("[^0-9]", "", num_employees.text)
-driver.get('http://google.com')
+if(args.num_employees[0] == None):	
+	element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, 'q')))
+	driver.find_element(By.NAME,'q').send_keys("site:linkedin.com " + args.company[0] + Keys.ENTER)
+	element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'linked')))
+	driver.find_element(By.PARTIAL_LINK_TEXT, 'linked').click()
+	element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, 'employee')))
+	num_employees = driver.find_element(By.PARTIAL_LINK_TEXT, 'employee')
+	num_employees = re.sub("[^0-9]", "", num_employees.text)
+	driver.get('http://google.com')
+else:
+	num_employees = args.num_employees[0]
 driver.find_element(By.NAME,'q').send_keys("site:linkedin.com/in " + args.company[0] + Keys.ENTER)
 time.sleep(1)
 for x in range(0,math.ceil(int(num_employees)/10)+1):
@@ -145,7 +148,7 @@ for t in title:
 		row = [name, title, email_string]
 		csv_writer.writerow(row)
 	else:
-		print(name + "\t" + title + "\t" + email_string + "\n")
+		print(name + "\t" + title + "\t" + email_string)
 if(txt):
 	txt_file.close()
 if(csv):
