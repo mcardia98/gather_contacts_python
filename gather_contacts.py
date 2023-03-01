@@ -27,7 +27,7 @@ parser.add_argument('-f', '--format', type=int, nargs=1, required=True,
 					6 - FirstName-Dot-LastName""")
 parser.add_argument('-d', '--domain', type=str, nargs=1, required=True,
 					help='Email Address domain, ex company.com')
-parser.add_argument('-o', '--output-file', type=str, nargs='*', required=False,
+parser.add_argument('-o', '--output-file', type=str, nargs='*', required=False, default=None,
 					help="""Optional output file, ex:
 					company_scrape.txt,company_scrape.csv
 					company_scrape.txt
@@ -39,42 +39,43 @@ args = parser.parse_args()
 csv = False
 txt = False
 file_name = args.output_file
-if(len(file_name)>2):
-	parser.error("More than 2 output files specified.")
-if(len(file_name)==1):
-	if(',' in file_name[0]):
-		file_name = file_name[0].split(',')
-	else:	
-		file_name = args.output_file[0]
-		file_format = file_name.split(".")[1]
-		if('csv' not in file_format and 'txt' not in file_format):
-			parser.error("Invalid file format, txt or csv.")
-		elif('csv' in file_format):
-			csv = True
-			csv_file = open(file_name, 'w', newline='')
-			csv_writer = CSV.writer(csv_file, dialect='excel',delimiter=',')
-			header = ["Name", "Position", "Email"]
-			csv_writer.writerow(header)
-		elif('txt' in file_format):
-			txt = True
-			txt_file = open(file_name,"w")
-			txt_file.write("Name" + "\t" + "Position" + "\t" + "Email\n")
-if(len(args.output_file)>1):
-	for x in file_name:
-		file_name = x
-		file_format = file_name.split(".")[1]
-		if('csv' not in file_format and 'txt' not in file_format):
-			parser.error("Invalid file format, txt or csv.")
-		elif('csv' in file_format):
-			csv = True
-			csv_file = open(file_name, 'w', newline='')
-			csv_writer = CSV.writer(csv_file, dialect='excel',delimiter=',')
-			header = ["Name", "Position", "Email"]
-			csv_writer.writerow(header)
-		elif('txt' in file_format):
-			txt = True
-			txt_file = open(file_name,"w")
-			txt_file.write("Name" + "\t" + "Position" + "\t" + "Email\n")
+if(file_name != None):
+	if(len(file_name)>2):
+		parser.error("More than 2 output files specified.")
+	if(len(file_name)==1):
+		if(',' in file_name[0]):
+			file_name = file_name[0].split(',')
+		else:	
+			file_name = args.output_file[0]
+			file_format = file_name.split(".")[1]
+			if('csv' not in file_format and 'txt' not in file_format):
+				parser.error("Invalid file format, txt or csv.")
+			elif('csv' in file_format):
+				csv = True
+				csv_file = open(file_name, 'w', newline='')
+				csv_writer = CSV.writer(csv_file, dialect='excel',delimiter=',')
+				header = ["Name", "Position", "Email"]
+				csv_writer.writerow(header)
+			elif('txt' in file_format):
+				txt = True
+				txt_file = open(file_name,"w")
+				txt_file.write("Name" + "\t" + "Position" + "\t" + "Email\n")
+	if(len(args.output_file)>1):
+		for x in file_name:
+			file_name = x
+			file_format = file_name.split(".")[1]
+			if('csv' not in file_format and 'txt' not in file_format):
+				parser.error("Invalid file format, txt or csv.")
+			elif('csv' in file_format):
+				csv = True
+				csv_file = open(file_name, 'w', newline='')
+				csv_writer = CSV.writer(csv_file, dialect='excel',delimiter=',')
+				header = ["Name", "Position", "Email"]
+				csv_writer.writerow(header)
+			elif('txt' in file_format):
+				txt = True
+				txt_file = open(file_name,"w")
+				txt_file.write("Name" + "\t" + "Position" + "\t" + "Email\n")
 email_format = args.format[0]
 email_domain = args.domain[0].strip("@")
 
