@@ -81,6 +81,8 @@ email_domain = args.domain[0].strip("@")
 
 options = Options()
 options.add_argument('--headless')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(options=options,service=ChromeService(ChromeDriverManager().install()))
 
 # Go to company site and get employee count
